@@ -1,0 +1,29 @@
+=IF([@Replied] = FALSE, "Follow-Up", "")
+
+Sub SendFollowUpEmails()
+    Dim OutlookApp As Object
+    Dim OutlookMail As Object
+    Dim ws As Worksheet
+    Dim lastRow As Long
+    Dim i As Long
+    
+    Set OutlookApp = CreateObject("Outlook.Application")
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change to your sheet name
+    lastRow = ws.Cells(ws.Rows.Count, "E").End(xlUp).Row
+    
+    For i = 2 To lastRow ' Assuming headers in row 1
+        If ws.Cells(i, "S").Value = False Then ' Check "Replied" status
+            Set OutlookMail = OutlookApp.CreateItem(0)
+            With OutlookMail
+                .To = ws.Cells(i, "E").Value
+                .Subject = "Follow-Up: " & ws.Cells(i, "H").Value
+                .Body = "Dear " & ws.Cells(i, "G").Value & "," & vbCrLf & vbCrLf & _
+                        "I wanted to follow up on my previous email regarding the HR, OPS & IT Lawyer position." & vbCrLf & _
+                        "Please let me know if you have any questions or need further information." & vbCrLf & vbCrLf & _
+                        "Best regards," & vbCrLf & _
+                        ws.Cells(i, "F").Value
+                .Send
+            End With
+        End If
+    Next i
+End Sub
